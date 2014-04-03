@@ -7,14 +7,10 @@
 # author: piotr.pachalko@tieto.com
 -->
 ```
----
-# Overview #
 
-
----
 # Getting started
 
-Sources are hosted in the [Git repository](https://...).
+Sources are hosted in the [GitHub](https://github.com/piotrpachalko/ansible-cluster).
 
 ## Prerequisities
 You will need:
@@ -46,8 +42,8 @@ You may want to install Ansible for all users
 ## Get the source repo
 Assuming that git is already available, clone the entire project
 
-    $ git clone https://.../ansible-clusters
-    $ cd ansible-clusters
+    $ git clone git@github.com:piotrpachalko/ansible-cluster.git
+    $ cd ansible-cluster
     
 ## Provision the cluster in the cloud
 
@@ -82,4 +78,6 @@ After the nodes are up, use `ssh` to connect to the selected node
 
     ssh {node_name}
 
-- - -
+
+# Contributing
+Follow [typical GiHub flow](https://guides.github.com/overviews/forking/). Fork the repository, make changes and send me a pull request.
