@@ -1,0 +1,10 @@
+---
+users: 
+  - name: vagrant
+    key:  ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC+bJQBmEpzEEq1WHcRIbxGiONrtVOtg/I/O9NnCGPigaO5y4onYukCU9RWAVjk+uu/BZKSOFx76AjNcG/yMUgizaQhJuaueZ5LlF2JZZAXuSldJS4xABAHhHfqU9smmj/8xLyaibySGNfUFpWKTgyv5nQp244Dpsl6LtzwEQNanNUSbWLpoWjb7OfEjYPclibPPQjGC0GhIVQFMmD4+m+3nfPX0Oh+Tfg71pCuJ6shiFeyecf7FDfp7Wrnq5TGbzk+uLBkBunLYgBGiDLTK8lPJybJ91MWlAiDPO0wJoKt89AYHzaUavzjw2Ia27SqqDJjBXmXYqX1cL48rCLqs2k1
+  - name: pachapio
+    key:  ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC+bJQBmEpzEEq1WHcRIbxGiONrtVOtg/I/O9NnCGPigaO5y4onYukCU9RWAVjk+uu/BZKSOFx76AjNcG/yMUgizaQhJuaueZ5LlF2JZZAXuSldJS4xABAHhHfqU9smmj/8xLyaibySGNfUFpWKTgyv5nQp244Dpsl6LtzwEQNanNUSbWLpoWjb7OfEjYPclibPPQjGC0GhIVQFMmD4+m+3nfPX0Oh+Tfg71pCuJ6shiFeyecf7FDfp7Wrnq5TGbzk+uLBkBunLYgBGiDLTK8lPJybJ91MWlAiDPO0wJoKt89AYHzaUavzjw2Ia27SqqDJjBXmXYqX1cL48rCLqs2k1
+
+useful_packages:
+  - vim
+  - tmux

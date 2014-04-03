@@ -1,0 +1,16 @@
+---
+- name: Add the webupd8 apt repository  
+  apt_repository: repo="ppa:webupd8team/java"
+  tags: java
+    
+- name: Automatically select the Oracle License (1/2)
+  shell: 'echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections'
+  tags: java
+
+- name: Automatically select the Oracle License (2/2)
+  shell: 'echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections'
+  tags: java
+
+- name: Install Oracle Java 6
+  apt: pkg=oracle-java6-installer update-cache=yes state=latest
+  tags: java

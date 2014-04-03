@@ -1,0 +1,38 @@
+#
+# Cluster mini - launch playbook
+#
+---
+- name: Launch nodes in the cloud
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    region:        'eu-west-1'
+    keypair:       'ansible'
+    sec_group:     'default'
+    instance_tags: '{"ansible-managed":"yes","class":"foo"}'
+    
+  tasks:  
+  - name: Launch instances in ec2
+    ec2: > 
+      region={{ region }} 
+      keypair={{ keypair }} 
+      group={{ sec_group }} 
+      image=ami-8e987ef9 
+      instance_type=t1.micro
+      id=hadoop-mini
+      wait=yes
+      count=1
+    register: ec2
+    tags: launch
+
+  - name: Add instance IPs to host group
+    add_host: hostname={{ item.public_ip }} groupname=ec2
+    with_items: ec2.instances
+    tags: launch
+
+  - name: Ensure SSH is up
+    wait_for: host={{ item.public_ip }} port=22 timeout=320
+    with_items: ec2.instances
+    tags: launch

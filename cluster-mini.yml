@@ -1,0 +1,11 @@
+#
+# Cluster mini - provisioning playbook
+#
+---
+- name: Provision nodes
+  hosts: ec2
+  sudo: yes
+  gather_facts: yes
+  roles:
+  - role: common
+  - role: hadoop

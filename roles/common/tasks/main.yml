@@ -1,0 +1,25 @@
+---
+
+- name: Ensure groups
+  group: name=foo
+  tags: common
+
+- name: Ensure users
+  user: name={{ item.name }} groups=foo,admin
+  with_items: users
+  tags: common
+
+- name: Ensure public ssh keys
+  authorized_key: user={{ item.name }} key='{{ item.key }}'
+  with_items: users
+  tags: common
+
+- name: Update apt repo
+  apt: update_cache=yes
+  tags: common
+
+- name: Install useful packages
+  apt: pkg={{ item }}
+  with_items: useful_packages
+  tags: common
+  

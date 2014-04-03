@@ -1,0 +1,86 @@
+---
+# file: roles/cdh-common/tasks/main.yml
+
+- name: Add CDH4 apt repository (Ubuntu precise)
+  apt_repository: repo='deb [arch=amd64] http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh precise-cdh4 contrib'
+  tags: [hadoop, hive]
+
+
+- name: Add CDH4 repository key (Ubuntu precise)
+  apt_key: url=http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh/archive.key
+  tags: [hadoop, hive]
+
+- name: Update apt repo
+  apt: update_cache=yes
+  tags: [hadoop, hive]
+
+- name: Install JobTracker
+  apt: pkg=hadoop-0.20-mapreduce-jobtracker
+  tags: [hadoop, hive]
+
+- name: Install NameNode
+  apt: pkg=hadoop-hdfs-namenode
+  tags: [hadoop, hive]
+
+# - name: Set the hostname of each system to a unique name
+# - name: Make sure the /etc/hosts file on each system contains the IP addresses and fully-qualified domain names (FQDN) of all the members of the cluster
+
+- name: Configure HDFS (1/3)
+  template: >
+    src=core-site.xml.j2 
+    dest=/etc/hadoop/conf/core-site.xml
+    owner=root
+    group=hadoop
+    mode=0644
+  tags: [hadoop, hive]
+
+- name: Configure HDFS (2/3)
+  template: >
+    src=hdfs-site.xml.j2 
+    dest=/etc/hadoop/conf/hdfs-site.xml
+    owner=root
+    group=hadoop
+    mode=0644
+  tags: [hadoop, hive]
+
+- name: Ensure NameNode data directory
+  file: >
+    path=/data/dfs/nn 
+    recurse=yes 
+    owner=hdfs 
+    group=hdfs 
+    mode=0700
+    state=directory
+  tags: [hadoop, hive]
+
+- name: ensure JAVA_HOME
+  lineinfile: dest=/etc/environment regexp=^JAVA_HOME= line=JAVA_HOME=/usr/lib/jvm/java-6-oracle/
+  tags: [hadoop, hive]
+
+- name: format HDFS, if necessary
+  shell: >
+    hadoop namenode -format 
+    creates=/data/dfs/nn/current
+  sudo: yes
+  sudo_user: hdfs
+  tags: [hadoop, hive]
+
+- name: Ensure HDFS is running
+  service: name=hadoop-hdfs-namenode state=started
+  tags: [hadoop, hive, foo]  
+  
+- name: Create HDFS /tmp, if necessary
+  shell: >
+    hadoop fs -mkdir /tmp
+  sudo: yes
+  sudo_user: hdfs
+  tags: [hadoop, hive, foo]  
+
+- name: Configure HDFS (3/3)
+  template: >
+    src=mapred-site.xml.j2 
+    dest=/etc/hadoop/conf/mapred-site.xml
+    owner=root
+    group=hadoop
+    mode=0644
+  tags: [hadoop, hive]
