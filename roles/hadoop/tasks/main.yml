@@ -84,3 +84,23 @@
     group=hadoop
     mode=0644
   tags: [hadoop, hive]
+  
+  - name: Create local storage directories for use by MapReduce (1/2)
+  shell: >
+    mkdir -p /data/mapred/local
+  sudo: yes
+  tags: [hadoop, hive]
+  
+  - name: Create local storage directories for use by MapReduce (2/2)
+  shell: >
+    chown -R mapred:hadoop /data/mapred/local
+  sudo: yes
+  tags: [hadoop, hive]
+  
+- name: Install Hive
+  apt: pkg=hive hive-metastore update_cache=yes
+  tags: [hadoop, hive]
+  
+  - name: Install MySQL
+  apt: pkg=mysql
+  tags: [hadoop, hive]
