@@ -195,7 +195,70 @@
 - name: Install Hive
   apt: pkg=hive hive-metastore update_cache=yes
   tags: [hadoop, hive]
-  
+ 
   - name: Install MySQL
   apt: pkg=mysql
   tags: [hadoop, hive]
+  
+  - name:  start MySQL
+  shell: >
+    service mysql start
+  sudo: yes
+  tags: [hadoop, hive]
+  
+  - name: install MySQL connector (1/2)
+  apt: pkg=libmysql-java
+  tags: [hadoop, hive]
+  
+  - name: install MySQL connector (2/2)
+  shell: >
+    ln -s /usr/share/java/libmysql-java.jar /usr/lib/hive/lib/libmysql-java.jar
+  sudo: yes
+  tags: [hadoop, hive]
+  
+  - name: set the MySQL root password
+  shell: >
+    spawn /usr/bin/mysql_secure_installation
+	
+	expect "Enter current password for root (enter for none):"
+	send "\r"
+		
+	expect "Set root password?"
+	send "y\r"
+
+	expect "New password:"
+	send "root\r"
+
+	expect "Re-enter new password:"
+	send "root\r"
+
+	expect "Remove anonymous users?"
+	send "y\r"
+
+	expect "Disallow root login remotely?"
+	send "n\r"
+
+	expect "Remove test database and access to it?"
+	send "y\r"
+
+	expect "Reload privilege tables now?"
+	send "y\r"
+  sudo: yes
+  tags: [hadoop, hive]
+  
+  - name: ensure the MySQL server starts at boot
+  shell: >
+    chkconfig mysql on
+  sudo: yes
+  tags: [hadoop, hive]
+  
+  - name: create database 'metastore' and init schema
+  mysql_db: name=metastore state=import target=/usr/lib/hive/scripts/metastore/upgrade/mysql/hive-schema-0.10.0.mysql.sql login_user=root login_password=root
+  # shell: mysql -uroot -proot metastore < /usr/lib/hive/scripts/metastore/upgrade/mysql/hive-schema-0.10.0.mysql.sql
+  tags: [hadoop, hive]
+  
+  - name: add and grant MySQL user 'hive'
+  mysql_user: name=hive password=hive priv=metastore.*:ALL state=present host=localhost
+  tags: [hadoop, hive]
+  
+  # continue with http://www.cloudera.com/content/cloudera-content/cloudera-docs/CDH4/latest/CDH4-Installation-Guide/cdh4ig_hive_metastore_configure.html?scroll=topic_18_4_1_unique_1__title_508_unique_1

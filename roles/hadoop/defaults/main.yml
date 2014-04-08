@@ -1,0 +1,7 @@
+# file: roles/hadoop/defaults/main.yml
+
+hadoop_servers:
+  1: localhost
+
+mysql_password: root
+mysql_user: root
