@@ -97,6 +97,101 @@
   sudo: yes
   tags: [hadoop, hive]
   
+  - name: Deploy Custom Configuration to Entire Cluster (1/2)
+  shell: >
+    alternatives --verbose --install /etc/hadoop/conf hadoop-conf /etc/hadoop/conf.my_cluster 50
+  sudo: yes
+  tags: [hadoop, hive]
+  
+  - name: Deploy Custom Configuration to Entire Cluster (2/2)
+  shell: >
+    alternatives --set hadoop-conf /etc/hadoop/conf.my_cluster
+  sudo: yes
+  tags: [hadoop, hive]
+  
+  - name: Start HDFS on Every Node in the Cluster (1/2)
+  shell: cd /etc/init.d ; ls hadoop-hdfs-*
+  register: command_result
+  tags: [hadoop, hive]
+
+  - name: Start HDFS on Every Node in the Cluster (2/2)
+  shell: service {{ item }}
+  with_items: command_result.stdout_lines
+  sudo: yes
+  tags: [hadoop, hive]
+  
+  - name: Create the HDFS /tmp Directory with the right permissions (1/2)
+  shell: >
+    hadoop fs -mkdir /tmp
+  sudo: yes
+  sudo_user: hdfs
+  tags: [hadoop, hive]
+  
+  - name: Create the HDFS /tmp Directory with the right permissions (2/2)
+  shell: >
+    hadoop fs -chmod -R 1777 /tmp
+  sudo: yes
+  sudo_user: hdfs
+  tags: [hadoop, hive]
+  
+  - name: Create and Configure the mapred.system.dir Directory in HDFS (1/2)
+  shell: >
+    hdfs hadoop fs -mkdir /tmp/mapred/system
+  sudo: yes
+  sudo_user: hdfs
+  tags: [hadoop, hive]
+  
+  - name: Create and Configure the mapred.system.dir Directory in HDFS (2/2)
+  shell: >
+    hadoop fs -chown mapred:hadoop /tmp/mapred/system
+  sudo: yes
+  sudo_user: hdfs
+  tags: [hadoop, hive]
+  
+  - name:  start the TaskTracker service
+  shell: >
+    service hadoop-0.20-mapreduce-tasktracker start
+  sudo: yes
+  tags: [hadoop, hive]
+  
+  - name:  start the JobTracker  service
+  shell: >
+    service hadoop-0.20-mapreduce-jobtracker start
+  sudo: yes
+  tags: [hadoop, hive]
+  
+  - name: Create a Home Directory for each MapReduce User (1/2)
+  shell: >
+    hadoop fs -mkdir /user/$USER
+  sudo: yes
+  sudo_user: hdfs
+  tags: [hadoop, hive]
+  
+  - name: Create a Home Directory for each MapReduce User (2/2)
+  shell: >
+    hadoop fs -chown $USER /user/$USER
+  sudo: yes
+  sudo_user: hdfs
+  tags: [hadoop, hive]
+  
+  - name:  Configuring init to Start Core Hadoop System Services (On the NameNode)
+  shell: >
+    update-rc.d hadoop-hdfs-namenode defaults
+  sudo: yes
+  tags: [hadoop, hive]
+  
+  - name:  Configuring init to Start Core Hadoop System Services (On the JobTracker)
+  shell: >
+    update-rc.d hadoop-0.20-mapreduce-jobtracker defaults
+  sudo: yes
+  tags: [hadoop, hive]
+  
+  - name:  Configuring init to Start Core Hadoop System Services (On the TaskTracker)
+  shell: >
+    update-rc.d hadoop-0.20-mapreduce-tasktracker defaults
+  sudo: yes
+  tags: [hadoop, hive]
+  
 - name: Install Hive
   apt: pkg=hive hive-metastore update_cache=yes
   tags: [hadoop, hive]
