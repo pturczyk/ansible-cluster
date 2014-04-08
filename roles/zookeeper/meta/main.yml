@@ -1,8 +1,7 @@
 # file: roles/zookeeper/meta/main.yml
 
 dependencies:
-  - { role: hostname }
   - { role: build }
   - { role: python }
-  - { role: jdk }
+  - { role: java-oracle }
   - { role: supervisor }
